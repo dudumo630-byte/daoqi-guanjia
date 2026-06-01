@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# User data (local only)
+data.json
+settings.json
+
+# Generated at runtime
+icons/arrow_down.png
+icons/arrow_up.png
+
+# Uploaded images (user-specific)
+images/
+
+# macOS
+.DS_Store
