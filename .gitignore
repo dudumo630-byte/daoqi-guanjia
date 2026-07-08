@@ -2,10 +2,12 @@
 __pycache__/
 *.pyc
 *.pyo
+.venv/
 
 # User data (local only)
 data.json
 settings.json
+chat_history.json
 
 # Generated at runtime
 icons/arrow_down.png
@@ -16,3 +18,18 @@ images/
 
 # macOS
 .DS_Store
+
+# Exported files
+*.csv
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# Backup files
+*.bak
+*.bak.*
+
+# User generated category config
+categories.json
