@@ -73,7 +73,7 @@
 ```
 到期管家 v1.0
 独立产品 + 开发 | 3069 行 Python | 4 个 AI 模块
-github.com/dudumo630-byte/到期管家
+github.com/dudumo630-byte/daoqi-guanjia
 ```
 
 ---
