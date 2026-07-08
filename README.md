@@ -88,8 +88,8 @@ AI 不是"加了个聊天框"——它改造了管理流程中的两个关键卡
 
 ```bash
 pip install PySide6
-git clone https://github.com/dudumo630-byte/shelf-life-manager.git
-cd shelf-life-manager
+git clone https://github.com/dudumo630-byte/到期管家.git
+cd 到期管家
 python3 shelf_life_gui.py
 ```
 
