@@ -116,7 +116,9 @@ pyinstaller 到期管家.spec
 
 ## 演示视频
 
-<video src="demo/到期管家-演示.mp4" controls width="100%" style="max-width:800px">您的浏览器不支持视频播放，请<a href="demo/到期管家-演示.mp4">下载观看</a></video>
+<video src="https://raw.githubusercontent.com/dudumo630-byte/daoqi-guanjia/main/demo/demo.mp4" controls width="100%" style="max-width:800px"></video>
+
+[⬇️ 下载视频文件](demo/demo.mp4)（3分25秒，5.2MB）
 
 ---
 
@@ -212,7 +214,9 @@ For AI features, add your DeepSeek API Key in Settings (OpenAI-compatible protoc
 
 ### Demo
 
-<video src="demo/到期管家-演示.mp4" controls width="100%" style="max-width:800px">Your browser doesn't support video playback. <a href="demo/到期管家-演示.mp4">Download the demo</a></video>
+<video src="https://raw.githubusercontent.com/dudumo630-byte/daoqi-guanjia/main/demo/demo.mp4" controls width="100%" style="max-width:800px"></video>
+
+[⬇️ Download](demo/demo.mp4) (3min 25sec, 5.2MB)
 
 ---
 
