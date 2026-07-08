@@ -107,12 +107,9 @@ pyinstaller 到期管家.spec
 ## 截图
 
 <p align="center">
-  <img src="screenshots/主界面（有商品的状态）.png" width="45%" alt="主界面">
-  <img src="screenshots/添加商品弹窗.png" width="45%" alt="添加商品">
-</p>
-
-<p align="center">
-  <img src="screenshots/空状态界面.png" width="45%" alt="空状态引导">
+  <img src="screenshots/空状态界面.png" width="30%" alt="初始界面">
+  <img src="screenshots/主界面（有商品的状态）.png" width="30%" alt="管理界面">
+  <img src="screenshots/添加商品弹窗.png" width="30%" alt="添加商品">
 </p>
 
 ---
