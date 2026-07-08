@@ -107,18 +107,25 @@ pyinstaller 到期管家.spec
 ## 截图
 
 <p align="center">
-  <img src="screenshots/空状态界面.png" width="30%" alt="初始界面">
-  <img src="screenshots/主界面（有商品的状态）.png" width="30%" alt="管理界面">
-  <img src="screenshots/添加商品弹窗.png" width="30%" alt="添加商品">
+  <img src="screenshots/空状态界面.png" width="45%" alt="初始界面">
+  <img src="screenshots/主界面（有商品的状态）.png" width="45%" alt="管理界面">
+</p>
+
+<p align="center">
+  <img src="screenshots/添加商品弹窗.png" width="25%" alt="添加商品弹窗">
 </p>
 
 ---
 
 ## 演示视频
 
-[![▶️ 点击播放演示视频](screenshots/主界面（有商品的状态）.png)](demo/demo.mp4)
-
-点击截图播放视频（3分25秒，5.2MB）
+<p align="center">
+  <a href="demo/demo.mp4">
+    <img src="screenshots/主界面（有商品的状态）.png" width="60%" alt="▶️ 点击播放演示视频">
+    <br>
+    <strong>▶️ 点击播放演示视频</strong>（3分25秒，5.2MB）
+  </a>
+</p>
 
 ---
 
@@ -180,8 +187,6 @@ Two core AI improvements:
 
 👉 [Product Overview](docs/产品总览.md) · [PRD (Chinese)](docs/PRD.md) · [Architecture (Chinese)](docs/技术架构.md)
 
----
-
 ### Features
 
 **Basics:**
@@ -197,8 +202,6 @@ Two core AI improvements:
 - **AI assistant** — sidebar chat, natural language queries
 - Works without API key (falls back to local analysis)
 
----
-
 ### Quick Start
 
 ```bash
@@ -210,15 +213,15 @@ python3 shelf_life_gui.py
 
 For AI features, add your DeepSeek API Key in Settings (OpenAI-compatible protocol).
 
----
-
 ### Demo
 
-[![▶️ Watch Demo Video](screenshots/主界面（有商品的状态）.png)](demo/demo.mp4)
-
-Click the screenshot to play (3min 25sec, 5.2MB)
-
----
+<p align="center">
+  <a href="demo/demo.mp4">
+    <img src="screenshots/主界面（有商品的状态）.png" width="60%" alt="▶️ Watch Demo Video">
+    <br>
+    <strong>▶️ Watch Demo Video</strong> (3min 25sec, 5.2MB)
+  </a>
+</p>
 
 ### Tech Stack
 
