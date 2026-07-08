@@ -170,6 +170,62 @@ MIT
 
 ## English
 
-A lightweight desktop tool for managing expiration dates of food, cosmetics, medicine, documents, and more. Two core AI features set it apart: photo-based auto entry (take a picture → AI fills in details) and decision support (AI analyzes your inventory and prioritizes what needs attention).
+**Shelf Life Manager** — an AI-powered desktop tool for tracking expiration dates of food, cosmetics, medicine, documents, and more.
 
-[Quick Start](#快速上手) · [Screenshots](#截图) · [Demo Video](#演示视频) · [Technical Docs](docs/技术架构.md)
+Two core AI improvements:
+- **📸 Photo-based entry** — take a picture → AI auto-fills name, category, expiry date. No manual typing.
+- **🧠 Decision support** — AI analyzes your inventory and tells you what needs attention first, prioritized by urgency.
+
+👉 [Product Overview](docs/产品总览.md) · [PRD (Chinese)](docs/PRD.md) · [Architecture (Chinese)](docs/技术架构.md)
+
+---
+
+### Features
+
+**Basics:**
+- Multi-category management (food, medicine, cosmetics, documents, etc.)
+- Expiration alerts on launch + system tray monitoring
+- Search & filter by keyword or date range
+- Photo archive with preview
+- CSV export (Excel-compatible)
+
+**AI features:**
+- **Photo recognition** — snap a product package → AI fills in the details
+- **AI Insights** — auto-generated 4-dimension report (what to watch / trends / suggestions / alerts)
+- **AI assistant** — sidebar chat, natural language queries
+- Works without API key (falls back to local analysis)
+
+---
+
+### Quick Start
+
+```bash
+pip install PySide6
+git clone https://github.com/dudumo630-byte/daoqi-guanjia.git
+cd daoqi-guanjia
+python3 shelf_life_gui.py
+```
+
+For AI features, add your DeepSeek API Key in Settings (OpenAI-compatible protocol).
+
+---
+
+### Demo
+
+▶️ [Watch Demo Video](demo/到期管家-演示.mp4) (3 min 25 sec)
+
+---
+
+### Tech Stack
+
+```
+Python 3.10+     — Language
+PySide6          — Desktop GUI (Qt)
+DeepSeek API     — AI features (OpenAI-compatible)
+JSON local       — Data persistence (no server)
+PyInstaller      — App packaging
+```
+
+- ~3000 lines of Python, zero runtime dependencies besides PySide6
+- Fully local data, never leaves your device
+- Cross-platform: macOS / Windows / Linux
