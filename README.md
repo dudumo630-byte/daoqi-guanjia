@@ -116,9 +116,9 @@ pyinstaller 到期管家.spec
 
 ## 演示视频
 
-<video src="demo/demo.mp4" controls></video>
+[![▶️ 点击播放演示视频](screenshots/主界面（有商品的状态）.png)](demo/demo.mp4)
 
-[⬇️ 下载视频文件](demo/demo.mp4)（3分25秒，5.2MB）
+点击截图播放视频（3分25秒，5.2MB）
 
 ---
 
@@ -214,9 +214,9 @@ For AI features, add your DeepSeek API Key in Settings (OpenAI-compatible protoc
 
 ### Demo
 
-<video src="demo/demo.mp4" controls></video>
+[![▶️ Watch Demo Video](screenshots/主界面（有商品的状态）.png)](demo/demo.mp4)
 
-[⬇️ Download](demo/demo.mp4) (3min 25sec, 5.2MB)
+Click the screenshot to play (3min 25sec, 5.2MB)
 
 ---
 
