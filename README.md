@@ -1,5 +1,6 @@
 <p align="center">
-  <img src="screenshots/主界面（有商品的状态）.png" width="80%" alt="到期管家主界面">
+  <img src="screenshots/空状态界面.png" width="45%" alt="初始界面 - 还没有商品">
+  <img src="screenshots/主界面（有商品的状态）.png" width="45%" alt="添加商品后的管理界面">
 </p>
 
 <h1 align="center">到期管家 · Shelf Life Manager</h1>
