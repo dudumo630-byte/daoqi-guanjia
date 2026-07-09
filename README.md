@@ -94,6 +94,8 @@ python3 shelf_life_gui.py
 ```
 
 > 需要 AI 功能？在设置页填入 DeepSeek API Key（支持 OpenAI 兼容协议）。
+>
+> ⚠️ 注意：项目自带 `.venv/`，启动必须用 `./.venv/bin/python shelf_life_gui.py`，系统 `python3` 没装 openai 会报 `No module named 'openai'`。
 
 ### 打包
 
@@ -127,8 +129,8 @@ pyinstaller 到期管家.spec
 
 ```
 到期管家/
-├── shelf_life_gui.py      # GUI 主程序（~2900 行）
-├── shelf_life.py           # 数据层（JSON 读写 + 提醒检查）
+├── shelf_life_gui.py      # GUI 主程序（1517 行）
+├── shelf_life.py           # 数据层（168 行，JSON 读写 + 提醒检查）
 ├── docs/                   # 产品文档
 │   ├── 产品总览.md         # 产品概览（从这里开始了解产品）
 │   ├── PRD.md              # 产品需求文档
@@ -159,7 +161,7 @@ JSON 本地存储    — 数据持久化
 PyInstaller      — 应用打包
 ```
 
-- ~3000 行 Python，零外部运行时依赖（除 PySide6）
+- ~1700 行 Python，零外部运行时依赖（除 PySide6 + openai SDK）
 - 全本地存储，数据不出设备
 - 跨平台：macOS / Windows / Linux
 
