@@ -333,8 +333,19 @@ def load_settings():
                 s.setdefault("api_key", "")
                 s.setdefault("base_url", DEFAULT_BASE_URL)
                 s.setdefault("model", DEFAULT_MODEL)
+                s.setdefault("vision_api_key", "")
+                s.setdefault("vision_base_url", DEFAULT_VISION_BASE_URL)
+                s.setdefault("vision_model", DEFAULT_VISION_MODEL)
                 return s
-    return {"remind_days": 30, "api_key": "", "base_url": DEFAULT_BASE_URL, "model": DEFAULT_MODEL}
+    return {
+        "remind_days": 30,
+        "api_key": "",
+        "base_url": DEFAULT_BASE_URL,
+        "model": DEFAULT_MODEL,
+        "vision_api_key": "",
+        "vision_base_url": DEFAULT_VISION_BASE_URL,
+        "vision_model": DEFAULT_VISION_MODEL,
+    }
 
 
 def save_settings(settings):
@@ -674,10 +685,14 @@ class AddItemDialog(QDialog):
         if not self._image_path:
             QMessageBox.information(self, "提示", "请先选择商品图片")
             return
-        if not self.settings.get("api_key", "").strip():
+        if not self.settings.get("vision_api_key", "").strip():
             QMessageBox.warning(
-                self, "未配置 API Key",
-                "AI 拍照识别需要 DeepSeek API Key。\n请到「设置」中配置后再试。\n\n配置后可自动识别：\n• 商品名称\n• 类别（食品/化妆品/其他）\n• 建议保质期"
+                self, "未配置视觉 API Key",
+                "AI 拍照识别需要独立的视觉 API（DeepSeek 官方 API 不支持图片识别）。\n\n"
+                "请到「设置」页底部的「🖼 视觉 API Key」处填写：\n"
+                "• OpenAI GPT-4o-mini（国际，默认）\n"
+                "• 智谱 GLM-4V（国内可用，base_url 改为 https://open.bigmodel.cn/api/paas/v4/，模型 glm-4v-plus）\n\n"
+                "配置后会自动识别：\n• 商品名称\n• 类别（食品/化妆品/其他）\n• 建议保质期"
             )
             return
         self._btn_ai_recognize.setEnabled(False)
@@ -700,10 +715,11 @@ class AddItemDialog(QDialog):
                 {"type": "text", "text": RECOGNIZE_PROMPT},
             ],
         }]
+        # 使用独立的视觉 API 配置（DeepSeek 不支持 image_url，必须用 OpenAI 兼容 vision 模型）
         worker = AIWorker(
-            self.settings["api_key"],
-            self.settings.get("base_url") or DEFAULT_BASE_URL,
-            self.settings.get("model") or DEFAULT_MODEL,
+            self.settings["vision_api_key"],
+            self.settings.get("vision_base_url") or DEFAULT_VISION_BASE_URL,
+            self.settings.get("vision_model") or DEFAULT_VISION_MODEL,
             messages, temperature=0.3, max_tokens=500,
         )
         worker.finished_ok.connect(self._on_recognize_ok)
@@ -1133,7 +1149,7 @@ class SettingsDialog(QDialog):
         self._highlight_preset(self._days)
 
         layout.addSpacing(8)
-        layout.addWidget(QLabel("DeepSeek API Key（用于 4 个 AI 功能）"))
+        layout.addWidget(QLabel("DeepSeek API Key（用于 AI 洞察 / AI 对话）"))
         self._api_key_input = QLineEdit()
         self._api_key_input.setEchoMode(QLineEdit.EchoMode.Password)
         self._api_key_input.setPlaceholderText("sk-...（留空则使用本地规则降级）")
@@ -1151,6 +1167,27 @@ class SettingsDialog(QDialog):
         self._model_input.setPlaceholderText(DEFAULT_MODEL)
         self._model_input.setText(settings.get("model", DEFAULT_MODEL))
         layout.addWidget(self._model_input)
+
+        # ── 视觉 API（独立配置，因为 DeepSeek 官方 API 不支持 image_url）──
+        layout.addSpacing(14)
+        layout.addWidget(QLabel("🖼 视觉 API Key（用于 AI 拍照识别，独立于 DeepSeek）"))
+        self._vision_key_input = QLineEdit()
+        self._vision_key_input.setEchoMode(QLineEdit.EchoMode.Password)
+        self._vision_key_input.setPlaceholderText("sk-...（OpenAI / 智谱 GLM-4V 等，留空则拍照识别降级）")
+        self._vision_key_input.setText(settings.get("vision_api_key", ""))
+        layout.addWidget(self._vision_key_input)
+
+        layout.addWidget(QLabel("视觉 API Base URL"))
+        self._vision_base_url_input = QLineEdit()
+        self._vision_base_url_input.setPlaceholderText(DEFAULT_VISION_BASE_URL)
+        self._vision_base_url_input.setText(settings.get("vision_base_url", DEFAULT_VISION_BASE_URL))
+        layout.addWidget(self._vision_base_url_input)
+
+        layout.addWidget(QLabel("视觉模型名称"))
+        self._vision_model_input = QLineEdit()
+        self._vision_model_input.setPlaceholderText(DEFAULT_VISION_MODEL)
+        self._vision_model_input.setText(settings.get("vision_model", DEFAULT_VISION_MODEL))
+        layout.addWidget(self._vision_model_input)
 
         btn_save = QPushButton("保存")
         btn_save.setProperty("class", "dialog_add")
@@ -1202,6 +1239,9 @@ class SettingsDialog(QDialog):
             "api_key": self._api_key_input.text().strip(),
             "base_url": self._base_url_input.text().strip() or DEFAULT_BASE_URL,
             "model": self._model_input.text().strip() or DEFAULT_MODEL,
+            "vision_api_key": self._vision_key_input.text().strip(),
+            "vision_base_url": self._vision_base_url_input.text().strip() or DEFAULT_VISION_BASE_URL,
+            "vision_model": self._vision_model_input.text().strip() or DEFAULT_VISION_MODEL,
         }
 
 
@@ -2131,7 +2171,11 @@ def call_deepseek_text(api_key, base_url, model, messages, temperature=0.7, max_
 # 顶层可配置项
 DEFAULT_BASE_URL = "https://api.deepseek.com/v1"
 DEFAULT_MODEL = "deepseek-chat"
-VL_MODEL = "deepseek-chat"  # DeepSeek-VL 通过同 base_url 复用，启用 base64 图像
+
+# 视觉 API 默认配置（DeepSeek 官方 API 不支持 image_url，必须独立配置）
+# OpenAI GPT-4o-mini: 国际通用 / 智谱 GLM-4V: 国内可访问（base_url=https://open.bigmodel.cn/api/paas/v4/, model=glm-4v-plus）
+DEFAULT_VISION_BASE_URL = "https://api.openai.com/v1"
+DEFAULT_VISION_MODEL = "gpt-4o-mini"
 
 PRESET_QUESTIONS = [
     "牛奶快过期了怎么消耗？",
