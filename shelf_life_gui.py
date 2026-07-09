@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
     QTableWidgetItem, QMessageBox, QHeaderView,
     QFileDialog, QDialog, QFrame, QGraphicsDropShadowEffect,
     QDateEdit, QMenu, QListWidget, QListWidgetItem, QCheckBox,
-    QStackedWidget,
+    QStackedWidget, QDockWidget,
 )
 from PySide6.QtCore import Qt, QSize, QRect, QDate
 from PySide6.QtGui import (
@@ -1237,12 +1237,6 @@ class MainWindow(QMainWindow):
         title.setStyleSheet("font-size:22px; font-weight:700; color:#343A40; background:transparent;")
         top.addWidget(title)
         top.addStretch()
-        self._btn_advice = QPushButton("💡 AI 建议")
-        self._btn_advice.setProperty("class", "secondary")
-        self._btn_advice.setCursor(Qt.CursorShape.PointingHandCursor)
-        self._btn_advice.clicked.connect(self._on_advice)
-        top.addWidget(self._btn_advice)
-
         self._btn_insight = QPushButton("🧠 AI 洞察")
         self._btn_insight.setProperty("class", "secondary")
         self._btn_insight.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -1252,7 +1246,7 @@ class MainWindow(QMainWindow):
         self._btn_chat = QPushButton("💬 AI 助手")
         self._btn_chat.setProperty("class", "secondary")
         self._btn_chat.setCursor(Qt.CursorShape.PointingHandCursor)
-        self._btn_chat.clicked.connect(self._on_chat)
+        self._btn_chat.clicked.connect(self._toggle_chat_dock)
         top.addWidget(self._btn_chat)
 
         btn_settings = QPushButton("⚙ 设置")
@@ -1358,6 +1352,19 @@ class MainWindow(QMainWindow):
 
         self._refresh_table()
         self._check_reminders()
+
+        # ── AI 助手侧边栏（QDockWidget 右侧停靠，默认隐藏）──
+        self._chat_panel = ChatPanel(self.items, self.settings, self)
+        self._chat_dock = QDockWidget("💬 AI 助手", self)
+        self._chat_dock.setWidget(self._chat_panel)
+        self._chat_dock.setFeatures(
+            QDockWidget.DockWidgetFeature.DockWidgetMovable
+            | QDockWidget.DockWidgetFeature.DockWidgetFloatable
+        )
+        self._chat_dock.setMinimumWidth(380)
+        self._chat_dock.setMaximumWidth(560)
+        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self._chat_dock)
+        self._chat_dock.hide()
 
     # ── 分组数据 ──
 
@@ -1638,7 +1645,7 @@ class MainWindow(QMainWindow):
         if reminders:
             QMessageBox.warning(self, "保质期提醒", "以下商品需要注意：\n\n" + "\n".join(reminders))
 
-    # ── AI 入口（4 个） ──
+    # ── AI 入口（3 个） ──
 
     def _has_api_key(self):
         return bool(self.settings.get("api_key", "").strip())
@@ -1685,16 +1692,6 @@ class MainWindow(QMainWindow):
         worker.failed.connect(on_fail)
         worker.start()
 
-    def _on_advice(self):
-        self._ai_common(
-            self._btn_advice,
-            "💡 AI 通用建议",
-            ADVICE_PROMPT,
-            generate_advice_local,
-            temperature=0.7,
-            max_tokens=1500,
-        )
-
     def _on_insight(self):
         self._ai_common(
             self._btn_insight,
@@ -1705,9 +1702,14 @@ class MainWindow(QMainWindow):
             max_tokens=2000,
         )
 
-    def _on_chat(self):
-        dlg = ChatDialog(self.items, self.settings, self)
-        dlg.exec()
+    def _toggle_chat_dock(self):
+        """切换 AI 助手侧边栏显示/隐藏"""
+        if self._chat_dock.isVisible():
+            self._chat_dock.hide()
+        else:
+            self._chat_dock.show()
+            self._chat_dock.raise_()
+            self._chat_panel._input.setFocus()
 
 
 def generate_insight_local(items, remind_days):
@@ -1888,8 +1890,8 @@ def save_chat_history(history):
         pass
 
 
-class ChatDialog(QDialog):
-    """AI 对话助手对话框（侧边栏风格）"""
+class ChatPanel(QWidget):
+    """AI 对话助手侧边栏面板（嵌入 QDockWidget，不打断主界面）"""
     def __init__(self, items, settings, parent=None):
         super().__init__(parent)
         self.items_ref = items
@@ -1898,10 +1900,8 @@ class ChatDialog(QDialog):
         self.history = load_chat_history()  # 持久化历史
         self._worker = None
 
-        self.setWindowTitle("💬 AI 对话助手")
-        self.resize(720, 600)
         self.setStyleSheet(f"""
-            QDialog {{
+            QWidget {{
                 background: #fff;
                 font-family: {FONT_FAMILY};
             }}
@@ -2071,7 +2071,7 @@ class ChatDialog(QDialog):
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# AI 模块（4 个：通用建议 / 洞察 / 对话 / 拍照识别）
+# AI 模块（3 个：洞察 / 对话 / 拍照识别）
 # ────────────────────────────────────────────────────────────────────────────
 
 import base64
@@ -2079,20 +2079,7 @@ from openai import OpenAI
 from PySide6.QtCore import QThread, Signal
 
 
-# ── AI 1：通用建议 ──────────────────────────────────────────────────────────
-
-ADVICE_PROMPT = """你是「到期管家」AI 助手。根据用户的库存给出处理建议。
-
-要求：
-1. 按紧急程度分组（已过期 / 即将过期 7天内 / 即将过期 30天内）
-2. 每件商品给出 1 句具体处理建议（如"尽快食用" / "做成果酱" / "送人"）
-3. 末尾给出 1 句整体总结（≤30 字）
-4. 用 Markdown 格式，简洁明了，不要寒暄
-
-库存数据：
-{items_json}
-"""
-
+# ── AI 1：拍照识别 ──────────────────────────────────────────────────────────
 
 RECOGNIZE_PROMPT = """请识别这张商品图片中的信息。
 
@@ -2127,44 +2114,6 @@ INSIGHT_PROMPT = """你是「到期管家」AI 分析师。基于用户库存生
 库存数据：
 {items_json}
 """
-
-
-def generate_advice_local(items, remind_days):
-    """无 API Key 时的本地规则降级：按过期天数排序 + Markdown 渲染"""
-    if not items:
-        return "📭 当前没有任何库存，无法给出建议。先添加商品吧！"
-    enriched = []
-    today = datetime.now().date()
-    for it in items:
-        try:
-            expiry = datetime.strptime(it["expiry_date"], "%Y-%m-%d").date()
-        except Exception:
-            continue
-        days = (expiry - today).days
-        enriched.append((days, it, expiry))
-    enriched.sort(key=lambda x: x[0])
-    expired = [(d, it) for d, it, _ in enriched if d < 0]
-    urgent = [(d, it) for d, it, _ in enriched if 0 <= d <= remind_days]
-    soon = [(d, it) for d, it, _ in enriched if remind_days < d <= remind_days * 3]
-    out = ["# 💡 本地处理建议\n"]
-    out.append("> ⚠️ 未配置 API Key，已切换到本地规则模式。\n")
-    if expired:
-        out.append(f"\n## 🔴 已过期（{len(expired)} 件）\n")
-        for d, it in expired:
-            out.append(f"- **{it['name']}**（{it['category']}）过期 {-d} 天——建议：直接丢弃，避免食用")
-    if urgent:
-        out.append(f"\n## 🟠 即将过期 {remind_days} 天内（{len(urgent)} 件）\n")
-        for d, it in urgent:
-            tip = "尽快食用" if d <= 2 else ("今天/明天用掉" if d == 0 else "本周内安排")
-            out.append(f"- **{it['name']}**（{it['category']}）剩 {d} 天——{tip}")
-    if soon:
-        out.append(f"\n## 🟡 {remind_days}-{remind_days*3} 天内到期（{len(soon)} 件）\n")
-        for d, it in soon:
-            out.append(f"- **{it['name']}**（{it['category']}）剩 {d} 天——留意")
-    if not (expired or urgent or soon):
-        out.append("\n## ✅ 当前没有紧急商品\n继续保持！")
-    out.append(f"\n---\n\n📊 库存共 {len(items)} 件，其中 {len(expired) + len(urgent)} 件需要关注。")
-    return "\n".join(out)
 
 
 def call_deepseek_text(api_key, base_url, model, messages, temperature=0.7, max_tokens=1500, timeout=45):
